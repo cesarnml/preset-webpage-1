@@ -103,6 +103,8 @@
             "grapesjs-preset-webpage": {},
           },
         });
+
+        // Prevent component toolbar from opening when selecting a component on canvas
         editor.on("load", function () {
           editor.on("component:selected", () => {
             console.log("selecting component");
