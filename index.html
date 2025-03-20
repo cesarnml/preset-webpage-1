@@ -97,15 +97,38 @@
             sortable: false,
             draggable: false, // Disable drag functionality
             dragLayers: false,
+            // Disable expandable elements in the Layers panel
+            expandable: false,
+          },
+          styleManager: {
+            appendTo: document.createElement("div"),
+          },
+          traitManager: {
+            appendTo: document.createElement("div"),
           },
           plugins: ["grapesjs-preset-webpage"],
           pluginsOpts: {
-            "grapesjs-preset-webpage": {},
+            "grapesjs-preset-webpage": {
+              blocks: [],
+            },
           },
         });
+        // Panels alias
+        var pn = editor.Panels;
 
+        pn.removeButton("views", "open-blocks");
+        pn.removeButton("views", "open-sm");
+        // Remove the Settings button
+        pn.removeButton("views", "open-tm");
         // Prevent component toolbar from opening when selecting a component on canvas
         editor.on("load", function () {
+          // open layers on load
+          const openLayersBtn = pn.getButton("views", "open-layers");
+          if (openLayersBtn) {
+            openLayersBtn.set("active", true);
+            editor.runCommand("open-layers");
+          }
+          // Open block manager
           editor.on("component:selected", () => {
             console.log("selecting component");
             const selected = editor.getSelected();
