@@ -122,6 +122,32 @@
         pn.removeButton("views", "open-tm");
         // Prevent component toolbar from opening when selecting a component on canvas
         editor.on("load", function () {
+          editor.Commands.add("core:component-delete", {
+            run: function (editor, sender) {
+              // Do nothing, effectively disabling the delete command
+              console.log("Delete command prevented");
+              return false;
+            },
+          });
+          const canvas = editor.Canvas.getDocument();
+          canvas.addEventListener(
+            "keydown",
+            function (e) {
+              // Check if Delete (46) or Backspace (8) key is pressed
+              if (e.keyCode === 46 || e.keyCode === 8) {
+                // Only prevent if we're in the editor (not in text editing mode)
+                if (
+                  editor.getSelected() &&
+                  !editor.getSelected().get("editable")
+                ) {
+                  e.preventDefault();
+                  console.log("Delete key prevented");
+                  return false;
+                }
+              }
+            },
+            true
+          );
           // open layers on load
           const openLayersBtn = pn.getButton("views", "open-layers");
           if (openLayersBtn) {
