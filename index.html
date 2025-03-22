@@ -95,40 +95,43 @@
           fromElement: true,
           layerManager: {
             sortable: false,
-            draggable: false, // Disable drag functionality
+            draggable: false, // Disable drag functionality on canvas
             dragLayers: false,
             // Disable expandable elements in the Layers panel
             expandable: false,
           },
           styleManager: {
-            appendTo: document.createElement("div"),
+            appendTo: document.createElement("div"), // prevents opening when a component is selected
           },
           traitManager: {
-            appendTo: document.createElement("div"),
+            appendTo: document.createElement("div"), // prevents opening when a component is selected
           },
-          plugins: ["grapesjs-preset-webpage"],
+          plugins: ["grapesjs-preset-webpage"], // mainly used for top, right-side panel layout
           pluginsOpts: {
             "grapesjs-preset-webpage": {
-              //  blocks: [],
+              blocks: [], // don't import default provided component blocks
             },
           },
         });
+
         // Panels alias
         var pn = editor.Panels;
 
-        //pn.removeButton("views", "open-blocks")
+        // remove add-blocks, style, and traits manager button
+        pn.removeButton("views", "open-blocks");
         pn.removeButton("views", "open-sm");
-        // Remove the Settings button
         pn.removeButton("views", "open-tm");
+
         // Prevent component toolbar from opening when selecting a component on canvas
         editor.on("load", function () {
           editor.Commands.add("core:component-delete", {
             run: function (editor, sender) {
-              // Do nothing, effectively disabling the delete command
+              // Do nothing, effectively disabling the delete component command
               console.log("Delete command prevented");
               return false;
             },
           });
+
           const canvas = editor.Canvas.getDocument();
           canvas.addEventListener(
             "keydown",
@@ -148,13 +151,15 @@
             },
             true
           );
-          // open layers on load
+
+          // open layers panel on load
           const openLayersBtn = pn.getButton("views", "open-layers");
           if (openLayersBtn) {
             openLayersBtn.set("active", true);
             editor.runCommand("open-layers");
           }
-          // Open block manager
+
+          // disable toolbar from opening when a component is selected
           editor.on("component:selected", () => {
             console.log("selecting component");
             const selected = editor.getSelected();
@@ -163,6 +168,7 @@
             }
           });
 
+          // trigger callback to check for anchor links when a component is added (update internal nav links)
           editor.on("component:add", (component) => {
             console.log("Component added:", component);
 
@@ -184,7 +190,7 @@
             // Your custom callback for when a component becomes visible
           }
 
-          // Listen for style changes on components
+          // Listen for style changes on components (to update internal nav links)
           editor.on("component:styleUpdate", (component, property) => {
             // Check if the style property being updated is 'display'
             const displayValue = component.getStyle().display;
