@@ -173,6 +173,41 @@
           function onComponentAdded(component) {
             console.log("Callback triggered for:", component.get("tagName"));
           }
+
+          function onComponentHidden(component) {
+            console.log("Component hidden:", component.get("tagName"));
+            // Your custom callback for when a component is hidden
+          }
+
+          function onComponentShown(component) {
+            console.log("Component shown:", component.get("tagName"));
+            // Your custom callback for when a component becomes visible
+          }
+
+          // Listen for style changes on components
+          editor.on("component:styleUpdate", (component, property) => {
+            // Check if the style property being updated is 'display'
+            const displayValue = component.getStyle().display;
+            console.log("displayValue:", displayValue);
+            console.log(
+              "component._previousDisplayNone :",
+              component._previousDisplayNone
+            );
+            if (component.getStyle().display === "none") {
+              // Component is being hidden
+              onComponentHidden(component);
+              // Store the previous display state
+              component._previousDisplayNone = displayValue === "none";
+            } else if (
+              displayValue !== "none" &&
+              component._previousDisplayNone
+            ) {
+              // Component was previously hidden and is now visible
+              onComponentShown(component);
+              // Store the previous display state
+              component._previousDisplayNone = displayValue === "none";
+            }
+          });
         });
       };
     </script>
