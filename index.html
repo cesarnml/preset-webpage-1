@@ -109,14 +109,14 @@
           plugins: ["grapesjs-preset-webpage"],
           pluginsOpts: {
             "grapesjs-preset-webpage": {
-              blocks: [],
+              //  blocks: [],
             },
           },
         });
         // Panels alias
         var pn = editor.Panels;
 
-        pn.removeButton("views", "open-blocks");
+        //pn.removeButton("views", "open-blocks")
         pn.removeButton("views", "open-sm");
         // Remove the Settings button
         pn.removeButton("views", "open-tm");
@@ -162,6 +162,17 @@
               selected.set("toolbar", []);
             }
           });
+
+          editor.on("component:add", (component) => {
+            console.log("Component added:", component);
+
+            // Your custom callback function
+            onComponentAdded(component);
+          });
+
+          function onComponentAdded(component) {
+            console.log("Callback triggered for:", component.get("tagName"));
+          }
         });
       };
     </script>
